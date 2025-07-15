@@ -280,7 +280,6 @@ export default function AuthModal({ visible, onClose, onAuth }: AuthModalProps) 
               styles.logoBackground,
               {
                 transform: [{ scale: logoScale }],
-                shadowColor: glowColor,
               }
             ]}>
               <Animated.View style={[styles.logoGlow, { backgroundColor: glowColor }]} />
