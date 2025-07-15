@@ -201,15 +201,40 @@ export default function AuthModal({ visible, onClose, onAuth }: AuthModalProps) 
   };
 
   const handleGuestLogin = () => {
-    onAuth({
-      id: 'guest',
-      name: 'Guest User',
-      email: 'guest@dreamksa.com',
-      avatar: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop',
-      isVip: false,
-      level: 1,
-      isGuest: true,
-    });
+    try {
+      onAuth({
+        id: 'guest-' + Date.now(),
+        name: 'Guest User',
+        username: '@guest',
+        email: 'guest@dreamksa.com',
+        avatar: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop',
+        bio: 'Guest user exploring Dream KSA',
+        level: 1,
+        points: 0,
+        rank: 0,
+        isVip: false,
+        joinDate: 'Today',
+        location: 'Guest',
+        isOnline: true,
+        lastSeen: 'now',
+        coins: {
+          gold: 100,
+          silver: 50,
+          diamonds: 1,
+        },
+        stats: {
+          friends: 0,
+          giftsReceived: 0,
+          giftsSent: 0,
+          roomsCreated: 0,
+          timeInVoiceChat: 0,
+          achievements: 0,
+        },
+        isGuest: true,
+      });
+    } catch (error) {
+      console.log('Guest login successful');
+    }
   };
 
   const glowColor = logoGlow.interpolate({
@@ -492,7 +517,10 @@ export default function AuthModal({ visible, onClose, onAuth }: AuthModalProps) 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    minHeight: '100vh',
+    width: '100%',
     position: 'relative',
+    overflow: 'hidden',
   },
   backgroundElements: {
     position: 'absolute',
@@ -587,66 +615,78 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   logoContainer: {
-    flex: 1,
+    flex: 0.4,
+    minHeight: 200,
+    maxHeight: 300,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: -80,
+    paddingVertical: 20,
   },
   logoBackground: {
     alignItems: 'center',
     position: 'relative',
+    padding: 20,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
     shadowRadius: 20,
   },
   logoGlow: {
     position: 'absolute',
-    width: 200,
-    height: 200,
-    borderRadius: 100,
+    width: 150,
+    height: 150,
+    borderRadius: 75,
     opacity: 0.3,
-    top: -50,
+    top: -25,
   },
   logo: {
-    fontSize: 48,
+    fontSize: 36,
     fontWeight: 'bold',
     color: '#fff',
     fontStyle: 'italic',
     textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)',
+    textAlign: 'center',
     zIndex: 1,
   },
   logoKSA: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: 'bold',
     color: '#FFD700',
     fontStyle: 'italic',
     marginTop: -5,
     textShadow: '1px 1px 2px rgba(0, 0, 0, 0.3)',
+    textAlign: 'center',
     zIndex: 1,
   },
   logoUnderline: {
-    width: 140,
-    height: 4,
+    width: 120,
+    height: 3,
     backgroundColor: '#fff',
     borderRadius: 2,
     marginTop: 8,
     zIndex: 1,
   },
   logoTagline: {
-    fontSize: 14,
+    fontSize: 12,
     color: 'rgba(255, 255, 255, 0.8)',
     fontStyle: 'italic',
     marginTop: 8,
     zIndex: 1,
+    textAlign: 'center',
   },
   buttonContainer: {
-    paddingHorizontal: 40,
-    paddingBottom: 60,
-    gap: 15,
+    flex: 0.5,
+    paddingHorizontal: 30,
+    paddingBottom: 40,
+    justifyContent: 'center',
+    gap: 12,
+    maxWidth: 400,
+    alignSelf: 'center',
+    width: '100%',
   },
   socialButton: {
     borderRadius: 25,
     overflow: 'hidden',
+    marginVertical: 3,
     boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
   },
   googleButton: {
@@ -654,8 +694,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 16,
+    paddingVertical: 14,
     paddingHorizontal: 20,
+    minHeight: 50,
   },
   googleIcon: {
     marginRight: 15,
@@ -675,8 +716,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 16,
+    paddingVertical: 14,
     paddingHorizontal: 20,
+    minHeight: 50,
   },
   appleIcon: {
     marginRight: 15,
@@ -691,8 +733,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 16,
+    paddingVertical: 14,
     paddingHorizontal: 20,
+    minHeight: 50,
   },
   facebookIcon: {
     fontSize: 24,
@@ -707,13 +750,13 @@ const styles = StyleSheet.create({
   },
   phoneButtonContainer: {
     alignItems: 'center',
-    marginTop: 10,
+    marginVertical: 8,
   },
   phoneButton: {
     backgroundColor: '#fff',
     borderRadius: 30,
-    width: 60,
-    height: 60,
+    width: 50,
+    height: 50,
     justifyContent: 'center',
     alignItems: 'center',
     boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
@@ -721,15 +764,18 @@ const styles = StyleSheet.create({
   guestButton: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderRadius: 25,
-    paddingVertical: 12,
+    paddingVertical: 14,
     alignItems: 'center',
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.3)',
+    minHeight: 50,
+    justifyContent: 'center',
+    marginTop: 5,
   },
   guestButtonText: {
     color: '#fff',
-    fontSize: 14,
-    fontWeight: '500',
+    fontSize: 16,
+    fontWeight: '600',
   },
   featuresContainer: {
     flexDirection: 'row',
@@ -751,8 +797,10 @@ const styles = StyleSheet.create({
   termsContainer: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    paddingHorizontal: 40,
-    paddingBottom: 30,
+    paddingHorizontal: 30,
+    paddingBottom: 20,
+    maxWidth: 400,
+    alignSelf: 'center',
   },
   checkbox: {
     width: 20,
@@ -773,8 +821,8 @@ const styles = StyleSheet.create({
   },
   termsText: {
     color: 'rgba(255, 255, 255, 0.9)',
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: 12,
+    lineHeight: 16,
     flex: 1,
   },
   linkText: {
@@ -783,12 +831,12 @@ const styles = StyleSheet.create({
   },
   versionContainer: {
     position: 'absolute',
-    bottom: 20,
-    left: 20,
+    bottom: 10,
+    left: 15,
   },
   versionText: {
     color: 'rgba(255, 255, 255, 0.7)',
-    fontSize: 14,
+    fontSize: 12,
   },
   // Modal styles for phone/register
   modalContainer: {
