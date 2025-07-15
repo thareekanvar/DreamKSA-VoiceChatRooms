@@ -119,13 +119,8 @@ const categories = [
 ];
 
 export default function RankingScreen() {
-  const { isAuthenticated } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState('overall');
   const [selectedRegion, setSelectedRegion] = useState('global');
-
-  if (!isAuthenticated) {
-    return null;
-  }
 
   const getRankColor = (rank: number) => {
     if (rank === 1) return '#FFD700';

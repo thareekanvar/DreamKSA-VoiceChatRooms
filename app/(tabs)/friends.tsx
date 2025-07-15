@@ -108,15 +108,10 @@ const mockSuggestions: Friend[] = [
 ];
 
 export default function FriendsScreen() {
-  const { isAuthenticated } = useAuth();
   const [searchText, setSearchText] = useState('');
   const [selectedTab, setSelectedTab] = useState<'friends' | 'suggestions'>('friends');
   const [friends, setFriends] = useState<Friend[]>(mockFriends);
   const [suggestions, setSuggestions] = useState<Friend[]>(mockSuggestions);
-
-  if (!isAuthenticated) {
-    return null;
-  }
 
   const filteredFriends = friends.filter(friend =>
     friend.name.toLowerCase().includes(searchText.toLowerCase())

@@ -154,7 +154,6 @@ const coinPackages = [
 ];
 
 export default function GiftsScreen() {
-  const { isAuthenticated } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState<'gifts' | 'coins'>('gifts');
   const [selectedRarity, setSelectedRarity] = useState<string>('all');
   const [userCoins, setUserCoins] = useState<UserCoins>({
@@ -162,10 +161,6 @@ export default function GiftsScreen() {
     silver: 750,
     diamonds: 25,
   });
-
-  if (!isAuthenticated) {
-    return null;
-  }
 
   const getRarityColor = (rarity: string) => {
     switch (rarity) {

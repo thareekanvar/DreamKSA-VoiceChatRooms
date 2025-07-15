@@ -72,14 +72,10 @@ const settingsOptions = [
 ];
 
 export default function ProfileScreen() {
-  const { user, logout, isAuthenticated } = useAuth();
+  const { user, logout } = useAuth();
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isSettingsVisible, setIsSettingsVisible] = useState(false);
   const [editedProfile, setEditedProfile] = useState(userProfile);
-
-  if (!isAuthenticated) {
-    return null;
-  }
 
   const handleEditProfile = () => {
     setIsEditModalVisible(true);
