@@ -11,7 +11,7 @@ import {
   Animated,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Mail, Lock, User, Phone, Apple } from 'lucide-react-native';
+import { Mail, Lock, User, Phone, Apple, Eye, EyeOff, Globe, Shield, Star } from 'lucide-react-native';
 
 const { width, height } = Dimensions.get('window');
 
@@ -27,62 +27,118 @@ export default function AuthModal({ visible, onClose, onAuth }: AuthModalProps) 
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [selectedCountry, setSelectedCountry] = useState('+966');
+  const [rememberMe, setRememberMe] = useState(false);
   
   // Animation values
+  const logoGlow = new Animated.Value(0);
   const logoScale = new Animated.Value(1);
-  const logoRotate = new Animated.Value(0);
-  const bubbleOpacity = new Animated.Value(0.3);
+  const lightningOpacity = new Animated.Value(0);
+  const starsOpacity = new Animated.Value(0);
+  const particleAnimation = new Animated.Value(0);
 
   useEffect(() => {
-    // Logo animation
-    const logoAnimation = Animated.loop(
+    // Lightning glow effect for logo
+    const glowAnimation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(logoGlow, {
+          toValue: 1,
+          duration: 2000,
+          useNativeDriver: false,
+        }),
+        Animated.timing(logoGlow, {
+          toValue: 0,
+          duration: 2000,
+          useNativeDriver: false,
+        }),
+      ])
+    );
+
+    // Subtle scale animation
+    const scaleAnimation = Animated.loop(
       Animated.sequence([
         Animated.timing(logoScale, {
-          toValue: 1.1,
-          duration: 2000,
+          toValue: 1.05,
+          duration: 3000,
           useNativeDriver: true,
         }),
         Animated.timing(logoScale, {
           toValue: 1,
-          duration: 2000,
+          duration: 3000,
           useNativeDriver: true,
         }),
       ])
     );
 
-    // Rotation animation
-    const rotateAnimation = Animated.loop(
-      Animated.timing(logoRotate, {
+    // Lightning flash effect
+    const lightningAnimation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(lightningOpacity, {
+          toValue: 0,
+          duration: 3000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(lightningOpacity, {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(lightningOpacity, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(lightningOpacity, {
+          toValue: 0.7,
+          duration: 150,
+          useNativeDriver: true,
+        }),
+        Animated.timing(lightningOpacity, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+
+    // Twinkling stars
+    const starsAnimation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(starsOpacity, {
+          toValue: 1,
+          duration: 1500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(starsOpacity, {
+          toValue: 0.3,
+          duration: 1500,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+
+    // Floating particles
+    const particleAnim = Animated.loop(
+      Animated.timing(particleAnimation, {
         toValue: 1,
-        duration: 10000,
+        duration: 8000,
         useNativeDriver: true,
       })
     );
 
-    // Bubble animation
-    const bubbleAnimation = Animated.loop(
-      Animated.sequence([
-        Animated.timing(bubbleOpacity, {
-          toValue: 0.6,
-          duration: 3000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(bubbleOpacity, {
-          toValue: 0.3,
-          duration: 3000,
-          useNativeDriver: true,
-        }),
-      ])
-    );
-
-    logoAnimation.start();
-    rotateAnimation.start();
-    bubbleAnimation.start();
+    glowAnimation.start();
+    scaleAnimation.start();
+    lightningAnimation.start();
+    starsAnimation.start();
+    particleAnim.start();
 
     return () => {
-      logoAnimation.stop();
-      rotateAnimation.stop();
-      bubbleAnimation.stop();
+      glowAnimation.stop();
+      scaleAnimation.stop();
+      lightningAnimation.stop();
+      starsAnimation.stop();
+      particleAnim.stop();
     };
   }, []);
 
@@ -121,7 +177,7 @@ export default function AuthModal({ visible, onClose, onAuth }: AuthModalProps) 
       onAuth({
         id: '1',
         name: 'User',
-        phone,
+        phone: selectedCountry + phone,
         avatar: 'https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop',
         isVip: false,
         level: 1,
@@ -140,9 +196,30 @@ export default function AuthModal({ visible, onClose, onAuth }: AuthModalProps) 
     });
   };
 
-  const spin = logoRotate.interpolate({
+  const handleForgotPassword = () => {
+    Alert.alert('Forgot Password', 'Password reset link will be sent to your email');
+  };
+
+  const handleGuestLogin = () => {
+    onAuth({
+      id: 'guest',
+      name: 'Guest User',
+      email: 'guest@dreamksa.com',
+      avatar: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop',
+      isVip: false,
+      level: 1,
+      isGuest: true,
+    });
+  };
+
+  const glowColor = logoGlow.interpolate({
     inputRange: [0, 1],
-    outputRange: ['0deg', '360deg'],
+    outputRange: ['rgba(255, 255, 255, 0.3)', 'rgba(255, 215, 0, 0.8)'],
+  });
+
+  const particleY = particleAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [height, -100],
   });
 
   if (mode === 'login') {
@@ -156,13 +233,38 @@ export default function AuthModal({ visible, onClose, onAuth }: AuthModalProps) 
           colors={['#00C851', '#007E33', '#00C851', '#4CAF50']}
           style={styles.container}
         >
-          {/* Animated Floating Bubbles */}
-          <View style={styles.floatingElements}>
-            <Animated.View style={[styles.floatingBubble, styles.bubble1, { opacity: bubbleOpacity }]} />
-            <Animated.View style={[styles.floatingBubble, styles.bubble2, { opacity: bubbleOpacity }]} />
-            <Animated.View style={[styles.floatingBubble, styles.bubble3, { opacity: bubbleOpacity }]} />
-            <Animated.View style={[styles.floatingBubble, styles.bubble4, { opacity: bubbleOpacity }]} />
-            <Animated.View style={[styles.floatingBubble, styles.bubble5, { opacity: bubbleOpacity }]} />
+          {/* Animated Background Elements */}
+          <View style={styles.backgroundElements}>
+            {/* Floating Particles */}
+            <Animated.View style={[
+              styles.particle,
+              styles.particle1,
+              { transform: [{ translateY: particleY }] }
+            ]} />
+            <Animated.View style={[
+              styles.particle,
+              styles.particle2,
+              { transform: [{ translateY: particleY }] }
+            ]} />
+            <Animated.View style={[
+              styles.particle,
+              styles.particle3,
+              { transform: [{ translateY: particleY }] }
+            ]} />
+
+            {/* Twinkling Stars */}
+            <Animated.View style={[styles.starsContainer, { opacity: starsOpacity }]}>
+              <Star size={12} color="#FFD700" style={styles.star1} />
+              <Star size={8} color="#FFD700" style={styles.star2} />
+              <Star size={10} color="#FFD700" style={styles.star3} />
+              <Star size={6} color="#FFD700" style={styles.star4} />
+              <Star size={14} color="#FFD700" style={styles.star5} />
+            </Animated.View>
+
+            {/* Lightning Effect */}
+            <Animated.View style={[styles.lightningContainer, { opacity: lightningOpacity }]}>
+              <View style={styles.lightning} />
+            </Animated.View>
           </View>
 
           {/* Header */}
@@ -172,20 +274,20 @@ export default function AuthModal({ visible, onClose, onAuth }: AuthModalProps) 
             </TouchableOpacity>
           </View>
 
-          {/* Animated Logo */}
+          {/* Animated Logo with Glow Effect */}
           <View style={styles.logoContainer}>
             <Animated.View style={[
               styles.logoBackground,
               {
-                transform: [
-                  { scale: logoScale },
-                  { rotate: spin }
-                ]
+                transform: [{ scale: logoScale }],
+                shadowColor: glowColor,
               }
             ]}>
+              <Animated.View style={[styles.logoGlow, { backgroundColor: glowColor }]} />
               <Text style={styles.logo}>Dream</Text>
               <Text style={styles.logoKSA}>KSA</Text>
               <View style={styles.logoUnderline} />
+              <Text style={styles.logoTagline}>Voice Chat Kingdom</Text>
             </Animated.View>
           </View>
 
@@ -200,7 +302,7 @@ export default function AuthModal({ visible, onClose, onAuth }: AuthModalProps) 
                 <View style={styles.googleIcon}>
                   <Text style={styles.googleG}>G</Text>
                 </View>
-                <Text style={styles.socialButtonText}>Google</Text>
+                <Text style={styles.socialButtonText}>Continue with Google</Text>
               </View>
             </TouchableOpacity>
 
@@ -211,7 +313,7 @@ export default function AuthModal({ visible, onClose, onAuth }: AuthModalProps) 
             >
               <View style={styles.appleButton}>
                 <Apple size={20} color="#fff" style={styles.appleIcon} />
-                <Text style={styles.appleButtonText}>Apple ID</Text>
+                <Text style={styles.appleButtonText}>Continue with Apple ID</Text>
               </View>
             </TouchableOpacity>
 
@@ -222,7 +324,7 @@ export default function AuthModal({ visible, onClose, onAuth }: AuthModalProps) 
             >
               <View style={styles.facebookButton}>
                 <Text style={styles.facebookIcon}>f</Text>
-                <Text style={styles.facebookButtonText}>Facebook</Text>
+                <Text style={styles.facebookButtonText}>Continue with Facebook</Text>
               </View>
             </TouchableOpacity>
 
@@ -235,11 +337,36 @@ export default function AuthModal({ visible, onClose, onAuth }: AuthModalProps) 
                 <Phone size={20} color="#00C851" />
               </View>
             </TouchableOpacity>
+
+            {/* Guest Login */}
+            <TouchableOpacity 
+              style={styles.guestButton}
+              onPress={handleGuestLogin}
+            >
+              <Text style={styles.guestButtonText}>Continue as Guest</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Additional Features */}
+          <View style={styles.featuresContainer}>
+            <TouchableOpacity style={styles.featureButton}>
+              <Globe size={16} color="rgba(255,255,255,0.8)" />
+              <Text style={styles.featureText}>العربية</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.featureButton}>
+              <Shield size={16} color="rgba(255,255,255,0.8)" />
+              <Text style={styles.featureText}>Safe & Secure</Text>
+            </TouchableOpacity>
           </View>
 
           {/* Terms and Privacy */}
           <View style={styles.termsContainer}>
-            <View style={styles.checkbox} />
+            <TouchableOpacity 
+              style={styles.checkbox}
+              onPress={() => setRememberMe(!rememberMe)}
+            >
+              {rememberMe && <Text style={styles.checkmark}>✓</Text>}
+            </TouchableOpacity>
             <Text style={styles.termsText}>
               By continuing, you agree to Dream KSA{'\n'}
               <Text style={styles.linkText}>Terms of service</Text> and <Text style={styles.linkText}>Privacy Policy</Text>
@@ -248,7 +375,7 @@ export default function AuthModal({ visible, onClose, onAuth }: AuthModalProps) 
 
           {/* Version */}
           <View style={styles.versionContainer}>
-            <Text style={styles.versionText}>P.S. 24</Text>
+            <Text style={styles.versionText}>Dream KSA v2.4</Text>
           </View>
         </LinearGradient>
       </Modal>
@@ -270,7 +397,7 @@ export default function AuthModal({ visible, onClose, onAuth }: AuthModalProps) 
             <Text style={styles.backButton}>← Back</Text>
           </TouchableOpacity>
           <Text style={styles.modalTitle}>
-            {mode === 'phone' ? 'Phone Login' : 'Register'}
+            {mode === 'phone' ? 'Phone Login' : 'Create Account'}
           </Text>
           <View style={styles.placeholder} />
         </View>
@@ -278,10 +405,13 @@ export default function AuthModal({ visible, onClose, onAuth }: AuthModalProps) 
         <View style={styles.modalContent}>
           {mode === 'phone' ? (
             <View style={styles.form}>
-              <View style={styles.inputContainer}>
-                <Phone size={20} color="#fff" />
+              <View style={styles.phoneInputContainer}>
+                <TouchableOpacity style={styles.countrySelector}>
+                  <Text style={styles.countryCode}>{selectedCountry}</Text>
+                  <Text style={styles.countryFlag}>🇸🇦</Text>
+                </TouchableOpacity>
                 <TextInput
-                  style={styles.input}
+                  style={styles.phoneInput}
                   placeholder="Phone Number"
                   placeholderTextColor="rgba(255,255,255,0.7)"
                   value={phone}
@@ -291,8 +421,12 @@ export default function AuthModal({ visible, onClose, onAuth }: AuthModalProps) 
               </View>
 
               <TouchableOpacity style={styles.authButton} onPress={handleAuth}>
-                <Text style={styles.authButtonText}>Continue</Text>
+                <Text style={styles.authButtonText}>Send Verification Code</Text>
               </TouchableOpacity>
+
+              <Text style={styles.phoneNote}>
+                We'll send you a verification code via SMS
+              </Text>
             </View>
           ) : (
             <View style={styles.form}>
@@ -311,7 +445,7 @@ export default function AuthModal({ visible, onClose, onAuth }: AuthModalProps) 
                 <Mail size={20} color="#fff" />
                 <TextInput
                   style={styles.input}
-                  placeholder="Email"
+                  placeholder="Email Address"
                   placeholderTextColor="rgba(255,255,255,0.7)"
                   value={email}
                   onChangeText={setEmail}
@@ -328,8 +462,15 @@ export default function AuthModal({ visible, onClose, onAuth }: AuthModalProps) 
                   placeholderTextColor="rgba(255,255,255,0.7)"
                   value={password}
                   onChangeText={setPassword}
-                  secureTextEntry
+                  secureTextEntry={!showPassword}
                 />
+                <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                  {showPassword ? (
+                    <EyeOff size={20} color="rgba(255,255,255,0.7)" />
+                  ) : (
+                    <Eye size={20} color="rgba(255,255,255,0.7)" />
+                  )}
+                </TouchableOpacity>
               </View>
 
               <TouchableOpacity style={styles.authButton} onPress={handleAuth}>
@@ -338,7 +479,7 @@ export default function AuthModal({ visible, onClose, onAuth }: AuthModalProps) 
 
               <TouchableOpacity onPress={() => setMode('login')}>
                 <Text style={styles.switchText}>
-                  Already have an account? <Text style={styles.switchLink}>Login</Text>
+                  Already have an account? <Text style={styles.switchLink}>Sign In</Text>
                 </Text>
               </TouchableOpacity>
             </View>
@@ -354,47 +495,84 @@ const styles = StyleSheet.create({
     flex: 1,
     position: 'relative',
   },
-  floatingElements: {
+  backgroundElements: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
   },
-  floatingBubble: {
+  particle: {
     position: 'absolute',
-    borderRadius: 50,
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    borderRadius: 25,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
-  bubble1: {
-    width: 80,
-    height: 80,
-    top: '15%',
-    right: '15%',
+  particle1: {
+    width: 50,
+    height: 50,
+    left: '20%',
   },
-  bubble2: {
-    width: 120,
-    height: 120,
-    bottom: '25%',
-    left: '10%',
-  },
-  bubble3: {
-    width: 60,
-    height: 60,
-    top: '35%',
-    left: '25%',
-  },
-  bubble4: {
-    width: 100,
-    height: 100,
-    bottom: '40%',
+  particle2: {
+    width: 30,
+    height: 30,
     right: '25%',
   },
-  bubble5: {
-    width: 90,
-    height: 90,
+  particle3: {
+    width: 40,
+    height: 40,
+    left: '70%',
+  },
+  starsContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  star1: {
+    position: 'absolute',
+    top: '20%',
+    left: '15%',
+  },
+  star2: {
+    position: 'absolute',
+    top: '35%',
+    right: '20%',
+  },
+  star3: {
+    position: 'absolute',
     top: '60%',
-    right: '10%',
+    left: '25%',
+  },
+  star4: {
+    position: 'absolute',
+    top: '75%',
+    right: '30%',
+  },
+  star5: {
+    position: 'absolute',
+    top: '45%',
+    left: '80%',
+  },
+  lightningContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  lightning: {
+    position: 'absolute',
+    top: '30%',
+    left: '50%',
+    width: 2,
+    height: 100,
+    backgroundColor: '#FFD700',
+    transform: [{ translateX: -1 }],
+    shadowColor: '#FFD700',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 1,
+    shadowRadius: 10,
   },
   header: {
     paddingTop: 50,
@@ -417,6 +595,18 @@ const styles = StyleSheet.create({
   },
   logoBackground: {
     alignItems: 'center',
+    position: 'relative',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 20,
+  },
+  logoGlow: {
+    position: 'absolute',
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    opacity: 0.3,
+    top: -50,
   },
   logo: {
     fontSize: 48,
@@ -426,6 +616,7 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 4,
+    zIndex: 1,
   },
   logoKSA: {
     fontSize: 24,
@@ -436,6 +627,7 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
+    zIndex: 1,
   },
   logoUnderline: {
     width: 140,
@@ -443,15 +635,28 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 2,
     marginTop: 8,
+    zIndex: 1,
+  },
+  logoTagline: {
+    fontSize: 14,
+    color: 'rgba(255, 255, 255, 0.8)',
+    fontStyle: 'italic',
+    marginTop: 8,
+    zIndex: 1,
   },
   buttonContainer: {
     paddingHorizontal: 40,
-    paddingBottom: 80,
+    paddingBottom: 60,
     gap: 15,
   },
   socialButton: {
     borderRadius: 25,
     overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   googleButton: {
     backgroundColor: '#fff',
@@ -470,7 +675,7 @@ const styles = StyleSheet.create({
     color: '#4285F4',
   },
   socialButtonText: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '600',
     color: '#333',
   },
@@ -486,7 +691,7 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   appleButtonText: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '600',
     color: '#fff',
   },
@@ -505,7 +710,7 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   facebookButtonText: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '600',
     color: '#fff',
   },
@@ -520,6 +725,41 @@ const styles = StyleSheet.create({
     height: 60,
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  guestButton: {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 25,
+    paddingVertical: 12,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  guestButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  featuresContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    paddingHorizontal: 40,
+    paddingBottom: 20,
+    gap: 30,
+  },
+  featureButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  featureText: {
+    color: 'rgba(255, 255, 255, 0.8)',
+    fontSize: 12,
+    fontWeight: '500',
   },
   termsContainer: {
     flexDirection: 'row',
@@ -534,6 +774,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
     marginRight: 15,
     marginTop: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.5)',
+  },
+  checkmark: {
+    color: '#00C851',
+    fontSize: 12,
+    fontWeight: 'bold',
   },
   termsText: {
     color: 'rgba(255, 255, 255, 0.9)',
@@ -602,6 +851,37 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#fff',
   },
+  phoneInputContainer: {
+    flexDirection: 'row',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 25,
+    marginBottom: 20,
+    width: '100%',
+    overflow: 'hidden',
+  },
+  countrySelector: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    paddingVertical: 15,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    gap: 8,
+  },
+  countryCode: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  countryFlag: {
+    fontSize: 18,
+  },
+  phoneInput: {
+    flex: 1,
+    paddingHorizontal: 15,
+    paddingVertical: 15,
+    fontSize: 16,
+    color: '#fff',
+  },
   authButton: {
     backgroundColor: '#fff',
     borderRadius: 25,
@@ -610,11 +890,22 @@ const styles = StyleSheet.create({
     marginTop: 20,
     width: '100%',
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   authButtonText: {
     color: '#00C851',
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
+  },
+  phoneNote: {
+    color: 'rgba(255, 255, 255, 0.7)',
+    fontSize: 12,
+    textAlign: 'center',
+    marginTop: 15,
   },
   switchText: {
     color: 'rgba(255, 255, 255, 0.8)',
