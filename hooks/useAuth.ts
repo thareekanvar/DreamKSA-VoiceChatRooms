@@ -6,22 +6,34 @@ export function useAuth() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
+    
     // Simulate checking for stored user session
     const checkAuthState = async () => {
       try {
         // Simulate a brief loading time
         await new Promise(resolve => setTimeout(resolve, 1000));
         
-        // For demo purposes, start with no user (show login)
-        setUser(null);
-        setIsLoading(false);
+        // Only update state if component is still mounted
+        if (isMounted) {
+          // For demo purposes, start with no user (show login)
+          setUser(null);
+          setIsLoading(false);
+        }
       } catch (error) {
         console.error('Auth check failed:', error);
-        setIsLoading(false);
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     };
 
     checkAuthState();
+    
+    // Cleanup function to prevent state updates on unmounted component
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const login = async (email: string, password: string) => {
