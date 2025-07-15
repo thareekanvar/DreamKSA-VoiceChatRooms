@@ -32,6 +32,7 @@ import {
 } from 'lucide-react-native';
 import { useAuth } from '@/hooks/useAuth';
 import AuthModal from '@/components/AuthModal';
+import VoiceRoomModal from '@/components/VoiceRoomModal';
 
 const { width } = Dimensions.get('window');
 
