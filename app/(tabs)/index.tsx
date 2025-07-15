@@ -541,6 +541,13 @@ export default function HomeScreen() {
 
         <View style={styles.bottomSpacing} />
       </ScrollView>
+      
+      {/* Voice Room Modal */}
+      <VoiceRoomModal
+        visible={isInRoom}
+        onClose={() => setIsInRoom(false)}
+        room={selectedRoom}
+      />
     </View>
   );
 }
