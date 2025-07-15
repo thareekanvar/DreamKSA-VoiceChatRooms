@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Alert,
   Dimensions,
+  Animated,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Mail, Lock, User, Phone, Apple } from 'lucide-react-native';
@@ -26,6 +27,64 @@ export default function AuthModal({ visible, onClose, onAuth }: AuthModalProps) 
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  
+  // Animation values
+  const logoScale = new Animated.Value(1);
+  const logoRotate = new Animated.Value(0);
+  const bubbleOpacity = new Animated.Value(0.3);
+
+  useEffect(() => {
+    // Logo animation
+    const logoAnimation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(logoScale, {
+          toValue: 1.1,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(logoScale, {
+          toValue: 1,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+
+    // Rotation animation
+    const rotateAnimation = Animated.loop(
+      Animated.timing(logoRotate, {
+        toValue: 1,
+        duration: 10000,
+        useNativeDriver: true,
+      })
+    );
+
+    // Bubble animation
+    const bubbleAnimation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(bubbleOpacity, {
+          toValue: 0.6,
+          duration: 3000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(bubbleOpacity, {
+          toValue: 0.3,
+          duration: 3000,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+
+    logoAnimation.start();
+    rotateAnimation.start();
+    bubbleAnimation.start();
+
+    return () => {
+      logoAnimation.stop();
+      rotateAnimation.stop();
+      bubbleAnimation.stop();
+    };
+  }, []);
 
   const handleAuth = () => {
     if (mode === 'login') {
@@ -33,7 +92,6 @@ export default function AuthModal({ visible, onClose, onAuth }: AuthModalProps) 
         Alert.alert('Error', 'Please fill in all fields');
         return;
       }
-      // Mock login
       onAuth({
         id: '1',
         name: 'John Doe',
@@ -47,7 +105,6 @@ export default function AuthModal({ visible, onClose, onAuth }: AuthModalProps) 
         Alert.alert('Error', 'Please fill in all fields');
         return;
       }
-      // Mock register
       onAuth({
         id: '1',
         name,
@@ -61,7 +118,6 @@ export default function AuthModal({ visible, onClose, onAuth }: AuthModalProps) 
         Alert.alert('Error', 'Please enter your phone number');
         return;
       }
-      // Mock phone login
       onAuth({
         id: '1',
         name: 'User',
@@ -74,7 +130,6 @@ export default function AuthModal({ visible, onClose, onAuth }: AuthModalProps) 
   };
 
   const handleSocialLogin = (provider: string) => {
-    // Mock social login
     onAuth({
       id: '1',
       name: `${provider} User`,
@@ -85,6 +140,11 @@ export default function AuthModal({ visible, onClose, onAuth }: AuthModalProps) 
     });
   };
 
+  const spin = logoRotate.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
+  });
+
   if (mode === 'login') {
     return (
       <Modal
@@ -93,16 +153,16 @@ export default function AuthModal({ visible, onClose, onAuth }: AuthModalProps) 
         presentationStyle="overFullScreen"
       >
         <LinearGradient
-          colors={['#8B5CF6', '#A855F7', '#C084FC', '#DDD6FE']}
+          colors={['#00C851', '#007E33', '#00C851', '#4CAF50']}
           style={styles.container}
         >
-          {/* Floating Bubbles */}
+          {/* Animated Floating Bubbles */}
           <View style={styles.floatingElements}>
-            <View style={[styles.floatingBubble, styles.bubble1]} />
-            <View style={[styles.floatingBubble, styles.bubble2]} />
-            <View style={[styles.floatingBubble, styles.bubble3]} />
-            <View style={[styles.floatingBubble, styles.bubble4]} />
-            <View style={[styles.floatingBubble, styles.bubble5]} />
+            <Animated.View style={[styles.floatingBubble, styles.bubble1, { opacity: bubbleOpacity }]} />
+            <Animated.View style={[styles.floatingBubble, styles.bubble2, { opacity: bubbleOpacity }]} />
+            <Animated.View style={[styles.floatingBubble, styles.bubble3, { opacity: bubbleOpacity }]} />
+            <Animated.View style={[styles.floatingBubble, styles.bubble4, { opacity: bubbleOpacity }]} />
+            <Animated.View style={[styles.floatingBubble, styles.bubble5, { opacity: bubbleOpacity }]} />
           </View>
 
           {/* Header */}
@@ -112,12 +172,21 @@ export default function AuthModal({ visible, onClose, onAuth }: AuthModalProps) 
             </TouchableOpacity>
           </View>
 
-          {/* Logo */}
+          {/* Animated Logo */}
           <View style={styles.logoContainer}>
-            <View style={styles.logoBackground}>
-              <Text style={styles.logo}>Binmo</Text>
+            <Animated.View style={[
+              styles.logoBackground,
+              {
+                transform: [
+                  { scale: logoScale },
+                  { rotate: spin }
+                ]
+              }
+            ]}>
+              <Text style={styles.logo}>Dream</Text>
+              <Text style={styles.logoKSA}>KSA</Text>
               <View style={styles.logoUnderline} />
-            </View>
+            </Animated.View>
           </View>
 
           {/* Login Buttons */}
@@ -163,7 +232,7 @@ export default function AuthModal({ visible, onClose, onAuth }: AuthModalProps) 
               onPress={() => setMode('phone')}
             >
               <View style={styles.phoneButton}>
-                <Phone size={20} color="#4CAF50" />
+                <Phone size={20} color="#00C851" />
               </View>
             </TouchableOpacity>
           </View>
@@ -172,7 +241,7 @@ export default function AuthModal({ visible, onClose, onAuth }: AuthModalProps) 
           <View style={styles.termsContainer}>
             <View style={styles.checkbox} />
             <Text style={styles.termsText}>
-              By continuing, you agree to Binmo{'\n'}
+              By continuing, you agree to Dream KSA{'\n'}
               <Text style={styles.linkText}>Terms of service</Text> and <Text style={styles.linkText}>Privacy Policy</Text>
             </Text>
           </View>
@@ -193,7 +262,7 @@ export default function AuthModal({ visible, onClose, onAuth }: AuthModalProps) 
       presentationStyle="pageSheet"
     >
       <LinearGradient
-        colors={['#8B5CF6', '#A855F7']}
+        colors={['#00C851', '#007E33']}
         style={styles.modalContainer}
       >
         <View style={styles.modalHeader}>
@@ -295,7 +364,7 @@ const styles = StyleSheet.create({
   floatingBubble: {
     position: 'absolute',
     borderRadius: 50,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
   },
   bubble1: {
     width: 80,
@@ -354,9 +423,22 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#fff',
     fontStyle: 'italic',
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
+  },
+  logoKSA: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#FFD700',
+    fontStyle: 'italic',
+    marginTop: -5,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
   logoUnderline: {
-    width: 120,
+    width: 140,
     height: 4,
     backgroundColor: '#fff',
     borderRadius: 2,
@@ -530,7 +612,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   authButtonText: {
-    color: '#8B5CF6',
+    color: '#00C851',
     fontSize: 18,
     fontWeight: 'bold',
   },
