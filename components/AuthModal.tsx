@@ -61,12 +61,12 @@ export default function AuthModal({ visible, onClose, onAuth }: AuthModalProps) 
         Animated.timing(logoScale, {
           toValue: 1.05,
           duration: 3000,
-          useNativeDriver: true,
+          useNativeDriver: false,
         }),
         Animated.timing(logoScale, {
           toValue: 1,
           duration: 3000,
-          useNativeDriver: true,
+          useNativeDriver: false,
         }),
       ])
     );
@@ -77,27 +77,27 @@ export default function AuthModal({ visible, onClose, onAuth }: AuthModalProps) 
         Animated.timing(lightningOpacity, {
           toValue: 0,
           duration: 3000,
-          useNativeDriver: true,
+          useNativeDriver: false,
         }),
         Animated.timing(lightningOpacity, {
           toValue: 1,
           duration: 200,
-          useNativeDriver: true,
+          useNativeDriver: false,
         }),
         Animated.timing(lightningOpacity, {
           toValue: 0,
           duration: 300,
-          useNativeDriver: true,
+          useNativeDriver: false,
         }),
         Animated.timing(lightningOpacity, {
           toValue: 0.7,
           duration: 150,
-          useNativeDriver: true,
+          useNativeDriver: false,
         }),
         Animated.timing(lightningOpacity, {
           toValue: 0,
           duration: 200,
-          useNativeDriver: true,
+          useNativeDriver: false,
         }),
       ])
     );
@@ -108,12 +108,12 @@ export default function AuthModal({ visible, onClose, onAuth }: AuthModalProps) 
         Animated.timing(starsOpacity, {
           toValue: 1,
           duration: 1500,
-          useNativeDriver: true,
+          useNativeDriver: false,
         }),
         Animated.timing(starsOpacity, {
           toValue: 0.3,
           duration: 1500,
-          useNativeDriver: true,
+          useNativeDriver: false,
         }),
       ])
     );
@@ -123,7 +123,7 @@ export default function AuthModal({ visible, onClose, onAuth }: AuthModalProps) 
       Animated.timing(particleAnimation, {
         toValue: 1,
         duration: 8000,
-        useNativeDriver: true,
+        useNativeDriver: false,
       })
     );
 
@@ -612,9 +612,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#fff',
     fontStyle: 'italic',
-    textShadowColor: 'rgba(0, 0, 0, 0.3)',
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 4,
+    textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)',
     zIndex: 1,
   },
   logoKSA: {
@@ -623,9 +621,7 @@ const styles = StyleSheet.create({
     color: '#FFD700',
     fontStyle: 'italic',
     marginTop: -5,
-    textShadowColor: 'rgba(0, 0, 0, 0.3)',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
+    textShadow: '1px 1px 2px rgba(0, 0, 0, 0.3)',
     zIndex: 1,
   },
   logoUnderline: {
@@ -651,11 +647,7 @@ const styles = StyleSheet.create({
   socialButton: {
     borderRadius: 25,
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
   },
   googleButton: {
     backgroundColor: '#fff',
@@ -724,11 +716,7 @@ const styles = StyleSheet.create({
     height: 60,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
   },
   guestButton: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
@@ -889,11 +877,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     width: '100%',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
   },
   authButtonText: {
     color: '#00C851',
