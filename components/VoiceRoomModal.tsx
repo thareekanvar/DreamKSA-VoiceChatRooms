@@ -11,23 +11,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { 
-  Mic, 
-  MicOff, 
-  Users, 
-  Crown, 
-  Gift, 
-  Heart,
-  Settings,
-  UserPlus,
-  Volume2,
-  VolumeX,
-  MessageCircle,
-  Share,
-  Hand,
-  X,
-  MoreHorizontal
-} from 'lucide-react-native';
+import { Mic, MicOff, Users, Crown, Gift, Heart, Settings, UserPlus, Volume2, VolumeX, MessageCircle, Share, Hand, X, MoveHorizontal as MoreHorizontal } from 'lucide-react-native';
 
 const { width } = Dimensions.get('window');
 
